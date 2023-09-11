@@ -1,0 +1,944 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      content="initial-scale=1, maximum-scale=5, minimum-scale=1, width=device-width"
+      name="viewport"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: Dubai, sans-serif;
+      }
+
+      .overlay-section {
+        position: absolute;
+        background: rgb(0 0 0 / 70%);
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        direction: rtl;
+      }
+
+      .overlay-section.active {
+        display: flex;
+      }
+
+      .container-text {
+        color: #fff;
+        width: 90%;
+        display: flex;
+        max-width: 585px;
+        justify-content: center;
+      }
+
+      .container-text .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 40px;
+        flex-grow: 0;
+        height: 90px;
+        width: 35px;
+      }
+
+      .container-text .text {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+
+      .container-text .next {
+        font-size: 16px;
+      }
+
+      .container-text .title {
+        font-size: 24px;
+      }
+
+      .container-text .will-start {
+        margin-top: 2px;
+        font-size: 16px;
+      }
+
+      .container-text .will-start.hide {
+        opacity: 0;
+      }
+
+      .embed-player {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        max-width: 100%;
+      }
+
+      .embed-player iframe,
+      .embed-player object,
+      .embed-player embed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .btns {
+        margin-top: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .btns .space-2 {
+        width: 10px;
+        height: 10px;
+      }
+
+      .btns button {
+        flex-grow: 1;
+        height: 42px;
+        flex-basis: 50%;
+        background: #ffffff;
+        outline: 0;
+        border: 1px solid #fff;
+        border-radius: 6px;
+        font-size: 16px;
+      }
+
+      .btns button.rol-back {
+        color: #fff;
+        background: none;
+      }
+
+      @media (max-width: 480px) {
+        .btns button {
+          height: 30px;
+          font-size: 14px;
+        }
+
+        .btns .space-2 {
+          width: 5px;
+          height: 5px;
+        }
+
+        .btns {
+          margin-top: 30px;
+        }
+
+        .container-text .will-start,
+        .container-text .next {
+          font-size: 14px;
+        }
+
+        .container-text .title {
+          font-size: 17px;
+        }
+
+        .container-text {
+          max-width: 400px;
+        }
+
+        .container-text .icon {
+          width: 25px;
+        }
+        .prevent-click.bottom {
+          height: 38px;
+        }
+        .youtube-player .prevent-click-on-player {
+          height: calc(100% - 38px);
+        }
+        .prevent-click.bottom {
+          height: 38px;
+        }
+        .youtube-player .prevent-click.bottom.active {
+          right: 0;
+          height: 38px;
+        }
+      }
+
+      .prevent-click {
+        height: 70px;
+        position: absolute;
+        width: 100%;
+        display: none;
+        z-index: 2;
+      }
+      .youtube-player .prevent-click {
+        display: block;
+      }
+      .prevent-click.top {
+        top: 0;
+      }
+      .prevent-click.bottom {
+        bottom: 0;
+        width: 40px;
+        height: 40px;
+        right: 8px;
+        cursor: pointer;
+      }
+      .prevent-click.bottom.qualty {
+        right: 50px;
+      }
+
+      .youtube-player .prevent-click.bottom.active {
+        width: 100%;
+        height: 50px;
+        cursor: auto;
+      }
+      .youtube-player .prevent-click-on-player {
+        position: absolute;
+        width: 100%;
+        height: calc(100% - 47px);
+        z-index: 1;
+      }
+      .qualty-container {
+        display: none;
+        position: absolute;
+        z-index: 3;
+        top: 50%;
+        left: 50%;
+        color: #fff;
+        background: rgb(0 0 0 / 84%);
+        padding: 15px;
+        border-radius: 7px;
+        flex-direction: column;
+        width: 300px;
+        align-items: center;
+        translate: -50% -50%;
+      }
+      .qualty-container.active {
+        display: flex;
+      }
+      .qualty-container ul {
+        list-style: none;
+        padding: 0;
+      }
+      .qualty-container ul li {
+        margin: 6px 0;
+        padding: 3px 0;
+        cursor: pointer;
+        font-size: 15px;
+      }
+    </style>
+    <!-- Production only -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-CWDHLVN74F"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+
+      gtag("js", new Date());
+
+      gtag("config", "G-ZQ85SXFP6K");
+    </script>
+  </head>
+
+  <body>
+    <div class="embed-player">
+      <div id="overlay" class="overlay-section">
+        <div class="container-text">
+          <div class="icon">
+            <img
+              id="nextItemImage"
+              src="https://st.abgateway.com/static/cg/vimeo/asstes/lesson.svg"
+            />
+          </div>
+          <div class="text">
+            <span id="nextItemNext" class="next"> التالي </span>
+            <div id="nextItemTitle" class="title">
+              مفهوم النهاية الموجودة من خلال الرسم
+            </div>
+            <div id="countDown" class="will-start">
+              <span id="willStart"> </span> <span id="timer">5</span>
+              <span id="seconds">ثواني</span>
+            </div>
+            <div class="btns">
+              <button id="nextItemRePlay" onclick="rePlay()" class="rol-back">
+                إعادة
+              </button>
+              <div class="space-2"></div>
+              <button id="nextItemStart" onclick="goToNextLesson()">
+                ابدأ
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="continerPlayer">
+        <iframe
+          id="player"
+          allow="autoplay; fullscreen"
+          allowfullscreen
+          frameborder="0"
+          frameborder="0"
+          mozallowfullscreen
+          src=""
+          webkitallowfullscreen
+          style="width: 100%; height: 100%"
+        ></iframe>
+        <div class="prevent-click-on-player" onclick="playVedio()"></div>
+        <div class="prevent-click top"></div>
+        <div id="qualtyBox" class="qualty-container">
+          <p>Please select qualty</p>
+          <ul>
+            <li onclick="setQualty('auto')" class="">Auto</li>
+            <li onclick="setQualty('hd1080')" class="">1080p</li>
+            <li onclick="setQualty('hd720')" class="">720p</li>
+            <li onclick="setQualty('large')" class="">540p</li>
+            <li onclick="setQualty('medium')" class="">360p</li>
+            <li onclick="setQualty('small')" class="">240p</li>
+          </ul>
+        </div>
+        <div
+          id="bottomElementQualty"
+          
+          class="prevent-click bottom qualty"
+        ></div>
+        <div
+          id="bottomElement"
+          onclick="fullScreen()"
+          class="prevent-click bottom"
+        ></div>
+      </div>
+    </div>
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+      var mainPLayer;
+      var autoplay;
+      var downloadTimer;
+      function countDown() {
+        var timeleft = 5;
+
+        downloadTimer = setInterval(() => {
+          if (timeleft <= 0) {
+            clearInterval(downloadTimer);
+            goToNextLesson();
+          }
+          document.getElementById("timer").innerHTML = timeleft;
+          timeleft -= 1;
+        }, 1000);
+      }
+
+      function rePlay() {
+        const overlaySection = get(".overlay-section");
+        overlaySection.classList.remove("active");
+
+        mainPLayer.play();
+
+        if (downloadTimer) {
+          clearInterval(downloadTimer);
+        }
+      }
+/*
+      function setQualty(playbackQuality) {
+        if (playbackQuality == "auto") {
+          //this will make quality auto
+          localStorage.removeItem("yt-player-quality");
+        } else {
+          var now = Date.now();
+          //this will set quality of your choice and it will be saved and be default for every video until expires:)
+          localStorage.setItem(
+            "yt-player-quality",
+            JSON.stringify({
+              data: playbackQuality,
+              creation: now,
+              expiration: now + 2419200000
+            })
+          );
+        }
+        //after you set value you have to reload the player to see the effect.
+        //so this method reloads the video where you left it so it is kinda seemless
+        if (player) {
+          var currentTime = mainPLayer.getCurrentTime();
+          mainPLayer.loadVideoById(
+            mainPLayer.getVideoData().video_id,
+            currentTime
+          );
+        }
+      }
+
+      function setQualtyss(val) {
+        console.log(val);
+        console.log(this);
+        mainPLayer.pauseVideo();
+        mainPLayer.setPlaybackQuality(val);
+        mainPLayer.playVideo();
+        console.log(mainPLayer.getPlaybackQuality());
+        document.getElementById("qualtyBox").classList.remove("active");
+      }
+      function showQualtyBox() {
+        if (document.getElementById("qualtyBox").classList.contains("active")) {
+          document.getElementById("qualtyBox").classList.remove("active");
+        } else {
+          document.getElementById("qualtyBox").classList.add("active");
+        }
+      }
+  */
+      function fullScreen() {
+     /*   if (
+          document.getElementById("bottomElement").classList.contains("active")
+        ) {
+          return;
+        }*/
+        const requestFullScreen =
+          document.getElementById("continerPlayer").requestFullscreen ||
+          document.getElementById("continerPlayer").webkitRequestFullscreen ||
+          document.getElementById("continerPlayer").mozRequestFullScreen;
+        const exitFullscreen =
+          document.exitFullscreen ||
+          document.webkitExitFullscreen ||
+          document.mozCancelFullScreen;
+        const isFullscreen =
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement;
+        if (isFullscreen) return exitFullscreen.bind(document)();
+        else if (!isFullscreen)
+          return requestFullScreen.bind(
+            document.getElementById("continerPlayer")
+          )();
+      }
+      var playerState = 0;
+      function playVedio() {
+    /*    if (document.getElementById("qualtyBox").classList.contains("active")) {
+          document.getElementById("qualtyBox").classList.remove("active");
+          return;
+        }
+*/
+        if (isNaN(urlParams?.["video_id"])) {
+          if (playerState == 0 || playerState == -1 || playerState == 2) {
+            mainPLayer.playVideo();
+          } else {
+            mainPLayer.pauseVideo();
+          }
+        } else {
+          mainPLayer.getPaused().then(function (paused) {
+            if (paused) {
+              mainPLayer.play();
+            } else {
+              mainPLayer.pause();
+            }
+          });
+        }
+      }
+      function goToNextLesson() {
+        if (urlParams["platform"] == "web") {
+          window.top.$nuxt.$store.dispatch(
+            "lesson/goToNextItem",
+            urlParams["next_item"] != "undefined" &&
+              urlParams["next_item"] != "null"
+              ? JSON.parse(urlParams["next_item"])
+              : "goToSubjectPage"
+          );
+        } else {
+          window.top.flutter_inappwebview.callHandler(
+            "goToNextItem",
+            '{"lesson_id":"' + urlParams["lesson_id"] + '"}'
+          );
+        }
+      }
+      function checkOverlay() {
+        const overlaySection = get(".overlay-section");
+        if (
+          autoplay.toString() == "true" &&
+          overlaySection.classList.contains("active")
+        ) {
+          document.getElementById("countDown").classList.remove("hide");
+          countDown();
+        } else {
+          if (downloadTimer) {
+            clearInterval(downloadTimer);
+          }
+          document.getElementById("countDown").classList.add("hide");
+        }
+      }
+
+      window.setAutoplay = function (arg) {
+        autoplay = arg;
+        checkOverlay();
+      };
+
+      function get(selector, root = document) {
+        return root.querySelector(selector);
+      }
+      var urlParams;
+      (window.onpopstate = function () {
+        var match;
+        try {
+          var pl = /\+/g; // Regex for replacing addition symbol with a space
+          var search = /([^&=]+)=?([^&]*)/g;
+          let decode = function (s) {
+            return decodeURIComponent(s.replace(pl, " "));
+          };
+
+          let href = window.location.href.replace(/#/g, " - ");
+
+          let windowSearch = decodeURI(href);
+
+          let mySubString = windowSearch.substring(
+            windowSearch.indexOf("next_item") + "next_item".length,
+            windowSearch.lastIndexOf("}")
+          );
+
+          mySubString = mySubString.replace(/&/g, " and ");
+
+          let str = windowSearch.replace(
+            windowSearch.substring(
+              windowSearch.indexOf("next_item") + "next_item".length,
+              windowSearch.lastIndexOf("}")
+            ),
+            mySubString
+          );
+          let query = str.substring(1);
+
+          urlParams = {};
+          while ((match = search.exec(query))) {
+            urlParams[decode(match[1])] = decode(match[2]);
+          }
+        } catch (e) {}
+      })();
+
+      autoplay = urlParams["autoPlay"] ? urlParams["autoPlay"] : false;
+      function getParameterByName(name) {
+        // used for the token only
+        return (location.search.split(name + "=")[1] || "").split("&")[0];
+      }
+
+      var piplelineUrl = "";
+      var gatewayUrl = "";
+      if (
+        getParameterByName("env") == "staging" ||
+        getParameterByName("env") == "development"
+      ) {
+        gatewayUrl = "https://gw.abstaging.xyz";
+        piplelineUrl = "https://5jw0m69hzh.execute-api.eu-west-1.amazonaws.com";
+      } else if (getParameterByName("env").includes("dev")) {
+        gatewayUrl = `https://${getParameterByName("env")}-gw.abstaging.xyz`;
+        piplelineUrl = "https://5jw0m69hzh.execute-api.eu-west-1.amazonaws.com";
+      } else {
+        // production env
+        gatewayUrl = "https://gw.abgateway.com";
+        piplelineUrl = "https://k3132xzdmh.execute-api.eu-west-1.amazonaws.com";
+      }
+      try {
+        if (urlParams["next_item"]) {
+          if (urlParams["next_item"].type == "lesson") {
+            document.getElementById("nextItemImage").src =
+              "https://st.abgateway.com/static/cg/vimeo/asstes/lesson.svg";
+          } else if (urlParams["next_item"].type == "quiz") {
+            document.getElementById("nextItemImage").src =
+              "https://st.abgateway.com/static/cg/vimeo/asstes/quizze.svg";
+          } else if (urlParams["next_item"].type == "test") {
+            document.getElementById("nextItemImage").src =
+              "https://st.abgateway.com/static/cg/vimeo/asstes/test.svg";
+          }
+
+          document.getElementById("overlay").direction = `${
+            urlParams["lang"] == "ar" ? "rtl" : "ltr"
+          }`;
+          document.getElementById("nextItemTitle").innerHTML =
+            urlParams["next_item"] != "undefined" &&
+            urlParams["next_item"] != "null"
+              ? JSON.parse(urlParams["next_item"]).title_ar
+              : "";
+          document.getElementById("nextItemNext").innerHTML = ` ${
+            urlParams["lang"] == "ar" ? "التالي" : "Next"
+          } `;
+
+          document.getElementById("nextItemRePlay").innerHTML = ` ${
+            urlParams["lang"] == "ar" ? "إعاده" : "Replay"
+          } `;
+
+          document.getElementById("nextItemStart").innerHTML = ` ${
+            urlParams["lang"] == "ar" ? "أبدا" : "Start"
+          } `;
+
+          document.getElementById("willStart").innerHTML = ` ${
+            urlParams["lang"] == "ar" ? "سيبدأ خلال " : "will start after"
+          } `;
+          document.getElementById("seconds").innerHTML = ` ${
+            urlParams["lang"] == "ar" ? "ثواني" : "seconds"
+          } `;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+
+      var iframe = document.querySelector("iframe");
+
+      (function setIframeSrc() {
+        const env = urlParams?.["platform"]?.toLowerCase();
+        if (!iframe) {
+          if (env !== "production") {
+            throw new Error("iframe not found");
+          }
+
+          return;
+        }
+        // example of the youtube video id: szg3dIZ8xDc
+        // example of the vimeo video id: 2423243
+
+        const isYoutubeVideoId = isNaN(urlParams?.["video_id"]);
+
+        if (isYoutubeVideoId) {
+          document.body.classList.add("youtube-player");
+          document.getElementById("bottomElement").classList.add("active");
+          setYoutubeUrl();
+          return;
+        }
+
+        // setting up vimeo
+        setVimeoSrc(env);
+        useVimeo();
+      })();
+
+      function setVimeoSrc(env) {
+        if (!urlParams["video_id"]) return;
+        if (env === "web") {
+          iframe.src = `https://player.vimeo.com/video/${urlParams["video_id"]}?loop=0&quality=720p`;
+        } else {
+          iframe.src = `https://player.vimeo.com/video/${urlParams["video_id"]}?loop=0&quality=540p`;
+        }
+      }
+
+      function setYoutubeUrl() {
+        if (!urlParams["video_id"]) return;
+
+        iframe.src = `https://www.youtube.com/embed/${urlParams["video_id"]}?enablejsapi=1&origin=${window.location.origin}&modestbranding=1&rel=0`;
+
+        var tag = document.createElement("script");
+        tag.id = "iframe-demo";
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      }
+
+      function onYouTubeIframeAPIReady() {
+        mainPLayer = new YT.Player("player", {
+          events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange
+          }
+        });
+        window.YTT = mainPLayer;
+      }
+      function onPlayerReady(event) {
+        event.target.setPlaybackQuality("hd720");
+      }
+
+      function onPlayerStateChange(event) {
+        playerState = event.data;
+        if (event.data == YT.PlayerState.BUFFERING) {
+          event.target.setPlaybackQuality("hd720");
+        }
+        if (event.data == -1) {
+          document.getElementById("bottomElement").classList.add("active");
+        } else {
+          document.getElementById("bottomElement").classList.remove("active");
+        }
+      }
+
+      function useVimeo() {
+        var player = new Vimeo.Player(iframe);
+        mainPLayer = player;
+        var percentageRequest = [];
+        var seconds = 1;
+        var timeOut = null;
+        var currentTime = 0;
+        var newTime = "";
+
+        player.on("play", function () {
+          if (timeOut == null) {
+            time();
+            sendCTA("play_lesson");
+          }
+        });
+
+        player.on("pause", function () {
+          clearTimeout(timeOut);
+          timeOut = null;
+        });
+
+        player.on("qualitychange", function (e) {
+          if (e.quality == "720p") {
+            return;
+          } else if (
+            e.quality == "1080p" ||
+            e.quality == "2K" ||
+            e.quality == "4K"
+          ) {
+            player.setQuality("720p");
+          }
+        });
+        player.on("ended", function () {
+          percentageRequest = percentageRequest.includes(30) ? [30] : [];
+          sendCTA("lesson_ended");
+          if (urlParams["next_item"]) {
+            const overlaySection = get(".overlay-section");
+            overlaySection.classList.add("active");
+            checkOverlay();
+          }
+        });
+
+        player.on("timeupdate", function (data) {
+          if (data.seconds - currentTime < 0) {
+            // seeked back
+            percentageRequest = percentageRequest.includes(30) ? [30] : [];
+            clearTimeout(timeOut);
+            timeOut = null;
+            if (currentTime - data.seconds < 0) {
+              seconds = 0;
+            } else {
+              seconds = parseInt(seconds - (currentTime - data.seconds));
+              seconds = seconds < 1 ? 1 : seconds;
+            }
+          } else if (data.seconds - currentTime > 2) {
+            // seeked forward
+            percentageRequest = percentageRequest.includes(30) ? [30] : [];
+            clearTimeout(timeOut);
+            timeOut = null;
+            seconds = 1;
+          }
+          currentTime = data.seconds;
+
+          if (!percentageRequest.includes(50) && data.percent > 0.5) {
+            seeLesson(50);
+          }
+
+          if (!percentageRequest.includes(99) && data.percent > 0.99) {
+            lessonEnded();
+          }
+
+          if (
+            percentageRequest.length == 0 &&
+            data.percent >= 0.0 &&
+            data.percent <= 0.1
+          ) {
+            DataPipeline(0.0, "percentage");
+          }
+
+          if (
+            !percentageRequest.includes(0.1) &&
+            data.percent >= 0.1 &&
+            data.percent <= 0.2
+          ) {
+            DataPipeline(0.1, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.2) &&
+            data.percent >= 0.2 &&
+            data.percent <= 0.3
+          ) {
+            DataPipeline(0.2, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.3) &&
+            data.percent >= 0.3 &&
+            data.percent <= 0.4
+          ) {
+            DataPipeline(0.3, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.4) &&
+            data.percent >= 0.4 &&
+            data.percent <= 0.5
+          ) {
+            DataPipeline(0.4, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.5) &&
+            data.percent >= 0.5 &&
+            data.percent <= 0.6
+          ) {
+            DataPipeline(0.5, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.6) &&
+            data.percent >= 0.6 &&
+            data.percent <= 0.7
+          ) {
+            DataPipeline(0.6, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.7) &&
+            data.percent >= 0.7 &&
+            data.percent <= 0.8
+          ) {
+            DataPipeline(0.7, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.8) &&
+            data.percent >= 0.8 &&
+            data.percent <= 0.9
+          ) {
+            DataPipeline(0.8, "percentage");
+          }
+          if (
+            !percentageRequest.includes(0.9) &&
+            data.percent >= 0.9 &&
+            data.percent <= 0.99
+          ) {
+            DataPipeline(0.9, "percentage");
+          }
+          if (
+            !percentageRequest.includes(1) &&
+            data.percent >= 0.99 &&
+            data.percent <= 1
+          ) {
+            DataPipeline(1, "percentage");
+          }
+        });
+
+        function time() {
+          if (percentageRequest.includes(30)) {
+            timeOut = null;
+            return;
+          }
+
+          timeOut = setTimeout(function () {
+            seconds = seconds + 1;
+            if (seconds > 30) {
+              seconds = 1;
+              DataPipeline(30, "time");
+              sendCTA("30sec_played");
+            }
+            time();
+          }, 1000);
+        }
+
+        function DataPipeline(value, type) {
+          percentageRequest.push(value);
+          let date = new Date();
+          fetch(piplelineUrl + "/Default/streams/DataPipeline/record", {
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              source: urlParams["source"],
+              timestamp:
+                date.getFullYear() +
+                "-" +
+                (date.getMonth() + 1) +
+                "-" +
+                date.getDate() +
+                " " +
+                date.getHours() +
+                ":" +
+                date.getMinutes() +
+                ":" +
+                date.getSeconds() +
+                "." +
+                date.getMilliseconds(),
+              user_id: urlParams["user_id"],
+              user_type: urlParams["user_type"],
+              body: {
+                comp_ver: "1",
+                trace_id: urlParams["trace_id"],
+                platform: urlParams["platform"],
+                device: urlParams["device"],
+                browser: urlParams["browser"],
+                event_type: "video",
+                event_content: {
+                  type: type,
+                  id: urlParams["lesson_id"],
+                  value: value
+                }
+              }
+            })
+          });
+        }
+
+        async function lessonEnded(value) {
+          if (urlParams["platform"] == "web") {
+            setTimeout(() => {
+              window.top.$nuxt.$store.dispatch(
+                "lesson/handleLessonEnding",
+                true
+              );
+            }, 300);
+          }
+        }
+
+        async function seeLesson(value) {
+          percentageRequest.push(value);
+
+          // watch lesson
+          if (urlParams["platform"] == "web") {
+            updateStore(window.top.$nuxt.$store);
+          } else {
+            window.top.flutter_inappwebview.callHandler(
+              "setSeeLesson",
+              '{"lesson_id":"' + urlParams["lesson_id"] + '"}'
+            );
+          }
+
+          await fetch(gatewayUrl + "/student/progresses/lessons", {
+            method: "POST",
+            headers: {
+              Accept: "application/json, text/plain, */*",
+              "Content-Type": "application/json",
+              "x-access-token": getParameterByName("x_access_token")
+            },
+
+            body: JSON.stringify({
+              lesson_id: urlParams["lesson_id"]
+            })
+          });
+        }
+        function sendCTA(label) {
+          try {
+            const hostName = window.location.hostname;
+            /// CTA will be sent only on production - becoase the config ID is for production
+            let params = {
+              screen_name: "lesson_home",
+              platform: urlParams["platform"],
+              lesson_id: urlParams["lesson_id"],
+              program_id: urlParams["program_id"],
+              subject_id: urlParams["subject_id"],
+              subtopic_id: urlParams["subtopic_id"],
+              component: "lesson"
+            };
+
+            if (
+              urlParams["user_type"] &&
+              urlParams["user_type"] == "signed_in"
+            ) {
+              params.crm_id = urlParams["user_id"];
+            }
+
+            gtag("event", label, params);
+
+            delete params.crm_id;
+            delete params.platform;
+
+            let obj = { ...params };
+
+            if (urlParams["platform"] == "web") {
+              window.top.$nuxt.$store.dispatch("analytics/sendCTA", {
+                event_name: label,
+                send_to_moe: true,
+                data: obj
+              });
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
+        function updateStore(store) {
+          store.dispatch("subject/watchPlaylistItem", urlParams["lesson_id"]);
+        }
+      }
+    </script>
+  </body>
+</html>
